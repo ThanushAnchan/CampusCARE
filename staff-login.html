@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Command Center - CampusCARE Grievance Resolution</title>
+    <meta name="description" content="Central command center for campus maintenance staff to view student grievances, dispatch technicians, and resolve issues.">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .staff-layout {
+            max-width: 1240px;
+            margin: 1.5rem auto 3.5rem;
+            padding: 0 1.25rem;
+            width: 100%;
+        }
+
+        .staff-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .staff-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .staff-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+        }
+
+        .staff-details h2 {
+            font-size: 1.3rem;
+            margin-bottom: 0.2rem;
+            color: white;
+        }
+
+        .staff-details p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .kpi-card {
+            padding: 1.25rem 1rem;
+            border-radius: var(--radius-md);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .kpi-number {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        /* Search and Filter Bar */
+        .controls-card {
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box-wrap {
+            flex: 2;
+            min-width: 260px;
+            position: relative;
+        }
+
+        .search-box-wrap input {
+            padding-left: 2.5rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 0.55rem 0.9rem;
+            font-size: 0.88rem;
+            border-radius: var(--radius-sm);
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: white;
+            outline: none;
+        }
+
+        /* Staff Action Cards */
+        .tickets-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .ticket-item {
+            padding: 1.75rem;
+            border-radius: var(--radius-lg);
+            transition: var(--transition);
+            position: relative;
+            border-left: 5px solid #64748b;
+        }
+
+        .ticket-item.border-urgent { border-left-color: #ef4444; }
+        .ticket-item.border-high { border-left-color: #f97316; }
+        .ticket-item.border-medium { border-left-color: #3b82f6; }
+        .ticket-item.border-low { border-left-color: #10b981; }
+
+        .ticket-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .student-reporter-tag {
+            font-size: 0.85rem;
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.12);
+            padding: 2px 10px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .ticket-subject {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 0.4rem;
+        }
+
+        .ticket-info-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .ticket-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .ticket-desc-text {
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            background: rgba(15, 23, 42, 0.4);
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ticket-action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .assigned-crew-badge {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .ticket-btn-group {
+            display: flex;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        .rating-display-pill {
+            background: rgba(234, 179, 8, 0.15);
+            border: 1px solid rgba(234, 179, 8, 0.35);
+            color: #facc15;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        /* Modal styling for resolution */
+        .resolution-form-modal {
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="campus-wallpaper-bg"></div>
+    <div class="bg-mesh-glow"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <a href="index.html" class="brand-logo">
+            <div class="brand-icon">🧑🏻‍🔧</div>
+            <div class="brand-text">
+                <div class="brand-title">
+                    CampusCARE
+                    <span class="brand-badge" style="background: rgba(245, 158, 11, 0.25); color: #fde047; border-color: rgba(245, 158, 11, 0.4); -webkit-text-fill-color: #fde047;">Staff Console</span>
+                </div>
+                <div class="brand-subtitle">Campus Maintenance & Facility Operations</div>
+            </div>
+        </a>
+
+        <div class="nav-actions">
+            <button class="wallpaper-btn" onclick="openWallpaperModal()" title="Change Wallpaper">
+                <span>🖼️ Theme</span>
+            </button>
+            <a href="student-complaint.html" class="btn btn-outline btn-sm">
+                <span>🧑🏻‍🎓 Open Student Desk</span>
+            </a>
+            <button class="btn btn-outline btn-sm" onclick="logoutUser()">
+                <span>🚪 Logout</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="staff-layout">
+        <!-- Staff Profile Banner -->
+        <div class="glass-panel staff-topbar">
+            <div class="staff-info">
+                <div class="staff-avatar">🛠️</div>
+                <div class="staff-details">
+                    <h2 id="staffDisplayName">Officer Ramesh Kumar</h2>
+                    <p id="staffDisplaySub">Campus Estate & Facilities Management Directorate • All Departments</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <button class="btn btn-primary btn-sm" onclick="exportComplaintsCSV()">
+                    <span>📥 Export Grievances CSV</span>
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="window.print()">
+                    <span>🖨️ Print Report</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- KPI Performance Cards -->
+        <div class="kpi-grid">
+            <div class="glass-panel kpi-card">
+                <div class="kpi-number" id="kpiTotal" style="color: #38bdf8;">0</div>
+                <div class="kpi-label">Total Logged</div>
+            </div>
+            <div class="glass-panel kpi-card">
+                <div class="kpi-number" id="kpiPending" style="color: #facc15;">0</div>
+                <div class="kpi-label">Pending Review</div>
+            </div>
+            <div class="glass-panel kpi-card">
+                <div class="kpi-number" id="kpiProgress" style="color: #60a5fa;">0</div>
+                <div class="kpi-label">In Progress</div>
+            </div>
+            <div class="glass-panel kpi-card">
+                <div class="kpi-number" id="kpiResolved" style="color: #34d399;">0</div>
+                <div class="kpi-label">Resolved</div>
+            </div>
+            <div class="glass-panel kpi-card">
+                <div class="kpi-number" id="kpiRate" style="color: #a78bfa;">100%</div>
+                <div class="kpi-label">Resolution Rate</div>
+            </div>
+            <div class="glass-panel kpi-card">
+                <div class="kpi-number" id="kpiRating" style="color: #f59e0b;">5.0 ★</div>
+                <div class="kpi-label">Avg Rating</div>
+            </div>
+        </div>
+
+        <!-- Search and Filter Bar -->
+        <div class="glass-panel controls-card">
+            <div class="search-row">
+                <div class="search-box-wrap">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" class="form-input" placeholder="Search by Ticket ID, Student USN, Name, Location or Problem keywords..." oninput="handleSearchFilter()">
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <div class="filter-group">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Filters:</span>
+                    
+                    <select id="filterStatus" class="filter-select" onchange="handleSearchFilter()">
+                        <option value="All">All Statuses</option>
+                        <option value="Pending">⏳ Pending</option>
+                        <option value="In Progress">🔄 In Progress</option>
+                        <option value="Resolved">✅ Resolved</option>
+                        <option value="Rejected">❌ Rejected</option>
+                    </select>
+
+                    <select id="filterCategory" class="filter-select" onchange="handleSearchFilter()">
+                        <option value="All">All Categories</option>
+                        <option value="electricity">⚡ Electricity</option>
+                        <option value="water">🚰 Water & Plumbing</option>
+                        <option value="wi-fi">📶 Wi-Fi & IT</option>
+                        <option value="furniture">🪑 Furniture</option>
+                        <option value="classroom">🏫 Classroom & AC</option>
+                        <option value="cleanliness">🧹 Sanitation</option>
+                        <option value="washroom">🧼 Washroom</option>
+                        <option value="lab">🔬 Lab Equipment</option>
+                    </select>
+
+                    <select id="filterPriority" class="filter-select" onchange="handleSearchFilter()">
+                        <option value="All">All Priorities</option>
+                        <option value="Urgent">🚨 Urgent (Immediate)</option>
+                        <option value="High">⚠️ High Priority</option>
+                        <option value="Medium">🔷 Medium Priority</option>
+                        <option value="Low">🟢 Low Priority</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Sort By:</span>
+                    <select id="sortOption" class="filter-select" onchange="handleSearchFilter()">
+                        <option value="newest">Newest First</option>
+                        <option value="priority">Priority (Urgent First)</option>
+                        <option value="oldest">Oldest First</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complaints Queue Feed -->
+        <div class="tickets-container" id="staffTicketsList">
+            <!-- Dynamically populated via JS -->
+        </div>
+    </main>
+
+    <!-- Modal: Resolve / Update Ticket -->
+    <div class="modal-overlay" id="actionModal">
+        <div class="modal-content resolution-form-modal">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>🛠️</span> Update Grievance Ticket Status
+                </div>
+                <button class="modal-close" onclick="closeActionModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="actionTicketForm" onsubmit="saveTicketAction(event)">
+                    <input type="hidden" id="modalTicketId">
+
+                    <div style="background: rgba(15, 23, 42, 0.6); padding: 0.75rem 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; border: 1px solid var(--card-border);">
+                        <div style="font-size: 0.82rem; color: var(--text-secondary);">Ticket Being Managed:</div>
+                        <div style="font-weight: 700; color: #38bdf8; font-size: 1.1rem;" id="modalTicketHeader">#CC-2026-1001</div>
+                        <div style="font-size: 0.9rem; color: white;" id="modalTicketSummary">Summary of the problem</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="modalStatusSelect">Update Ticket Status <span style="color: #38bdf8;">*</span></label>
+                        <select id="modalStatusSelect" class="form-select" required>
+                            <option value="Pending">⏳ Pending (Under Initial Review)</option>
+                            <option value="In Progress">🔄 In Progress (Technician Dispatched)</option>
+                            <option value="Resolved">✅ Resolved (Work Inspected & Complete)</option>
+                            <option value="Rejected">❌ Rejected / Invalid Request</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="modalAssigneeSelect">Assign Technician / Campus Cell</label>
+                        <select id="modalAssigneeSelect" class="form-select">
+                            <option value="Electrical Maintenance Cell">⚡ Electrical Maintenance Cell</option>
+                            <option value="Plumbing & Water Supply Team">🚰 Plumbing & Water Supply Team</option>
+                            <option value="IT Systems & Campus Wi-Fi Admin">📶 IT Systems & Campus Wi-Fi Admin</option>
+                            <option value="Carpentry & Civil Maintenance Wing">🪑 Carpentry & Civil Maintenance Wing</option>
+                            <option value="Housekeeping & Sanitation Crew">🧹 Housekeeping & Sanitation Crew</option>
+                            <option value="Hostel Caretaker Office">🏢 Hostel Caretaker Office</option>
+                            <option value="Estate Officer Ramesh Kumar">👤 Estate Officer Ramesh Kumar (Self)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="modalResolutionNotes">Official Resolution Remarks / Work Report</label>
+                        <textarea id="modalResolutionNotes" class="form-textarea" rows="3" placeholder="Enter work details (e.g. Replaced faulty MCB switch, cleaned filter, welded table clamp, safe to use)..."></textarea>
+                    </div>
+
+                    <!-- Attached photo control if present -->
+                    <div id="modalImageRow" style="display: none; margin-bottom: 1.25rem; background: rgba(15, 23, 42, 0.45); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--card-border);">
+                        <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 600;">Attached Photo Evidence:</div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                            <img id="modalImageThumb" src="" style="max-height: 80px; max-width: 120px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.15); cursor: pointer;" onclick="openImageModal(this.src)" title="Click to enlarge">
+                            <button type="button" class="btn btn-outline btn-sm" onclick="removeImageFromModalTicket()" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35);">
+                                <span>🗑️ Remove Image Only</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-danger-outline" onclick="deleteTicketFromModal()" title="Permanently delete this grievance ticket">
+                            <span>🗑️ Delete Grievance</span>
+                        </button>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-outline" onclick="closeActionModal()">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-emerald">
+                                <span>💾 Save & Broadcast</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Enlarge Modal -->
+    <div class="modal-overlay" id="imageModal">
+        <div class="modal-content" style="max-width: 750px; background: rgba(10, 15, 29, 0.95); text-align: center;">
+            <div class="modal-header">
+                <div class="modal-title"><span>📸</span> Photo Evidence Verification</div>
+                <button class="modal-close" onclick="closeImageModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1rem;">
+                <img src="" id="enlargedImg" style="width: 100%; max-height: 500px; object-fit: contain; border-radius: var(--radius-md);" alt="Enlarged Photo">
+            </div>
+        </div>
+    </div>
+
+    <!-- Wallpaper Selector Modal -->
+    <div class="modal-overlay" id="wallpaperModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><span>🖼️</span> Switch Wallpaper</div>
+                <button class="modal-close" onclick="closeWallpaperModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="wallpaper-picker-grid" id="wallpaperGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="campus-data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            applyWallpaper();
+            setupStaffUser();
+            renderStaffDashboard();
+
+            // Inter-tab live synchronization
+            window.addEventListener('storage', (e) => {
+                if (e.key === STORAGE_KEY) {
+                    renderStaffDashboard();
+                }
+            });
+            window.addEventListener('campuscare_updated', () => {
+                renderStaffDashboard();
+            });
+        });
+
+        function setupStaffUser() {
+            let user = getCurrentUser();
+            if (!user || user.role !== 'staff') {
+                user = {
+                    role: 'staff',
+                    name: 'Officer Ramesh Kumar',
+                    department: 'All Departments'
+                };
+                setCurrentUser(user);
+            }
+
+            document.getElementById('staffDisplayName').innerText = user.name;
+            document.getElementById('staffDisplaySub').innerText = `Campus Estate Directorate • ${user.department || 'Central Facility Management'}`;
+        }
+
+        // Render KPI statistics & Tickets List
+        function renderStaffDashboard() {
+            updateKpiStats();
+            handleSearchFilter();
+        }
+
+        function updateKpiStats() {
+            const stats = getSystemStats();
+            document.getElementById('kpiTotal').innerText = stats.total;
+            document.getElementById('kpiPending').innerText = stats.pending;
+            document.getElementById('kpiProgress').innerText = stats.inProgress;
+            document.getElementById('kpiResolved').innerText = stats.resolved;
+            document.getElementById('kpiRate').innerText = stats.rate + '%';
+            document.getElementById('kpiRating').innerText = stats.avgRating + ' ★';
+        }
+
+        function handleSearchFilter() {
+            const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+            const statusFilter = document.getElementById('filterStatus').value;
+            const categoryFilter = document.getElementById('filterCategory').value;
+            const priorityFilter = document.getElementById('filterPriority').value;
+            const sortOption = document.getElementById('sortOption').value;
+
+            let list = getAllComplaints();
+
+            // Text search
+            if (query) {
+                list = list.filter(c => 
+                    c.id.toLowerCase().includes(query) ||
+                    (c.studentName && c.studentName.toLowerCase().includes(query)) ||
+                    (c.studentUsn && c.studentUsn.toLowerCase().includes(query)) ||
+                    (c.location && c.location.toLowerCase().includes(query)) ||
+                    (c.title && c.title.toLowerCase().includes(query)) ||
+                    (c.description && c.description.toLowerCase().includes(query))
+                );
+            }
+
+            // Status filter
+            if (statusFilter !== 'All') {
+                list = list.filter(c => c.status === statusFilter);
+            }
+
+            // Category filter
+            if (categoryFilter !== 'All') {
+                list = list.filter(c => c.category === categoryFilter);
+            }
+
+            // Priority filter
+            if (priorityFilter !== 'All') {
+                list = list.filter(c => c.priority === priorityFilter);
+            }
+
+            // Sorting
+            const priorityWeights = { 'Urgent': 4, 'High': 3, 'Medium': 2, 'Low': 1 };
+            if (sortOption === 'priority') {
+                list.sort((a, b) => (priorityWeights[b.priority] || 0) - (priorityWeights[a.priority] || 0));
+            } else if (sortOption === 'oldest') {
+                list.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+            } else {
+                // newest
+                list.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            }
+
+            renderTicketCards(list);
+        }
+
+        function renderTicketCards(list) {
+            const container = document.getElementById('staffTicketsList');
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-panel" style="text-align: center; padding: 3.5rem 1.5rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                        <h3 style="color: white; margin-bottom: 0.5rem;">No Grievance Tickets Match Your Filters</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.25rem;">Try adjusting search keywords or resetting status/category filters.</p>
+                        <button class="btn btn-outline" onclick="resetFilters()">Reset All Filters</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map(c => {
+                const priorityInfo = PRIORITY_META[c.priority] || PRIORITY_META['Medium'];
+                const statusInfo = STATUS_META[c.status] || STATUS_META['Pending'];
+                const catInfo = CATEGORY_META[c.category] || { label: c.category, icon: '📌' };
+
+                return `
+                    <div class="glass-panel ticket-item border-${c.priority.toLowerCase()}" id="staff-ticket-${c.id}">
+                        <div class="ticket-top">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <span class="ticket-id">#${c.id}</span>
+                                <span class="badge" style="background: ${priorityInfo.bg}; color: ${priorityInfo.color}; border-color: ${priorityInfo.border};">
+                                    ${priorityInfo.icon} ${c.priority} Priority
+                                </span>
+                                <span class="badge" style="background: rgba(255,255,255,0.08); color: #cbd5e1;">
+                                    ${catInfo.icon} ${c.categoryLabel || catInfo.label}
+                                </span>
+                                <span class="student-reporter-tag">
+                                    🧑🏻‍🎓 ${escapeHtml(c.studentName)} (${c.studentUsn}) • ${c.year || '3rd Year'}
+                                </span>
+                            </div>
+
+                            <span class="badge" style="background: ${statusInfo.bg}; color: ${statusInfo.color}; border-color: ${statusInfo.border}; font-size: 0.88rem; padding: 0.35rem 0.85rem;">
+                                ${statusInfo.icon} ${c.status}
+                            </span>
+                        </div>
+
+                        <h3 class="ticket-subject">${escapeHtml(c.title)}</h3>
+
+                        <div class="ticket-info-pills">
+                            <div class="ticket-info-item">📍 <strong>Location:</strong> ${escapeHtml(c.location)}</div>
+                            <div class="ticket-info-item">🗓️ <strong>Logged:</strong> ${c.createdAt}</div>
+                            <div class="ticket-info-item">🏛️ <strong>Dept:</strong> ${escapeHtml(c.department || 'General')}</div>
+                            ${c.studentRating ? `
+                                <div class="rating-display-pill">
+                                    ⭐ Student Rated: ${c.studentRating}/5
+                                    ${c.studentFeedback ? `("${escapeHtml(c.studentFeedback)}")` : ''}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="ticket-desc-text">
+                            <strong>Grievance Description:</strong><br>
+                            ${escapeHtml(c.description)}
+                        </div>
+
+                        ${c.image ? `
+                            <div style="margin-bottom: 1.25rem;">
+                                <div style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.35rem;">Evidence Attached by Student:</div>
+                                <img src="${c.image}" class="evidence-thumb" onclick="openImageModal('${c.image}')" alt="Issue Evidence" title="Click to inspect photo">
+                            </div>
+                        ` : ''}
+
+                        ${c.resolutionNotes ? `
+                            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.88rem; color: #a7f3d0;">
+                                <strong>Recorded Resolution Note:</strong> ${escapeHtml(c.resolutionNotes)}
+                                ${c.resolvedAt ? `<span style="color: #6ee7b7; font-size: 0.8rem; margin-left: 0.5rem;">(Resolved at: ${c.resolvedAt})</span>` : ''}
+                            </div>
+                        ` : ''}
+
+                        <div class="ticket-action-bar">
+                            <div class="assigned-crew-badge">
+                                🛠️ <strong>Assigned Technician:</strong> 
+                                <span style="color: #38bdf8;">${escapeHtml(c.assignedTo || 'Unassigned')}</span>
+                            </div>
+
+                            <div class="ticket-btn-group">
+                                ${c.status !== 'In Progress' && c.status !== 'Resolved' ? `
+                                    <button class="btn btn-outline btn-sm" onclick="quickStatusChange('${c.id}', 'In Progress')">
+                                        <span>🔄 Mark In Progress</span>
+                                    </button>
+                                ` : ''}
+
+                                ${c.status !== 'Resolved' ? `
+                                    <button class="btn btn-emerald btn-sm" onclick="openResolveModal('${c.id}')">
+                                        <span>✅ Solve & Mark Resolved</span>
+                                    </button>
+                                ` : ''}
+
+                                <button class="btn btn-primary btn-sm" onclick="openActionModal('${c.id}')">
+                                    <span>⚙️ Manage Ticket</span>
+                                </button>
+
+                                <button class="btn btn-danger-outline btn-sm" onclick="confirmDeleteTicket('${c.id}')" title="Delete Problem">
+                                    <span>🗑️ Delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterStatus').value = 'All';
+            document.getElementById('filterCategory').value = 'All';
+            document.getElementById('filterPriority').value = 'All';
+            document.getElementById('sortOption').value = 'newest';
+            handleSearchFilter();
+        }
+
+        // Quick status changer
+        function quickStatusChange(id, status) {
+            updateComplaint(id, { 
+                status: status,
+                assignedTo: 'Central Maintenance Directorate'
+            });
+            showToast(`🔄 Ticket #${id} status updated to: ${status}`);
+            renderStaffDashboard();
+        }
+
+        // Modal for Full Ticket Management
+        function openActionModal(id) {
+            const list = getAllComplaints();
+            const ticket = list.find(c => c.id === id);
+            if (!ticket) return;
+
+            document.getElementById('modalTicketId').value = ticket.id;
+            document.getElementById('modalTicketHeader').innerText = `#${ticket.id} (${ticket.priority} Priority)`;
+            document.getElementById('modalTicketSummary').innerText = `${ticket.title} — ${ticket.location}`;
+            document.getElementById('modalStatusSelect').value = ticket.status;
+            document.getElementById('modalAssigneeSelect').value = ticket.assignedTo || 'Electrical Maintenance Cell';
+            document.getElementById('modalResolutionNotes').value = ticket.resolutionNotes || '';
+
+            // Handle evidence photo preview & removal button in modal
+            const imgRow = document.getElementById('modalImageRow');
+            const imgThumb = document.getElementById('modalImageThumb');
+            if (ticket.image) {
+                imgThumb.src = ticket.image;
+                imgRow.style.display = 'block';
+            } else {
+                imgThumb.src = '';
+                imgRow.style.display = 'none';
+            }
+
+            document.getElementById('actionModal').classList.add('active');
+        }
+
+        // Delete grievance ticket with confirmation
+        function confirmDeleteTicket(id) {
+            const list = getAllComplaints();
+            const ticket = list.find(c => c.id === id);
+            const titleSnippet = ticket ? `\n"${ticket.title}"` : '';
+            const reporterSnippet = ticket ? `\nReported by: ${ticket.studentName} (${ticket.studentUsn})` : '';
+
+            if (confirm(`⚠️ Are you sure you want to permanently delete Grievance #${id}?${titleSnippet}${reporterSnippet}\n\nThis will remove the problem from the system.`)) {
+                deleteComplaint(id);
+                showToast(`🗑️ Grievance #${id} deleted successfully.`);
+                renderStaffDashboard();
+            }
+        }
+
+        // Delete ticket from within the action modal
+        function deleteTicketFromModal() {
+            const id = document.getElementById('modalTicketId').value;
+            if (!id) return;
+            const list = getAllComplaints();
+            const ticket = list.find(c => c.id === id);
+            const titleSnippet = ticket ? `\n"${ticket.title}"` : '';
+
+            if (confirm(`⚠️ Are you sure you want to permanently delete Grievance #${id}?${titleSnippet}\n\nThis will remove the problem from the system.`)) {
+                deleteComplaint(id);
+                closeActionModal();
+                showToast(`🗑️ Grievance #${id} deleted successfully.`);
+                renderStaffDashboard();
+            }
+        }
+
+        // Remove attached image from modal ticket
+        function removeImageFromModalTicket() {
+            const id = document.getElementById('modalTicketId').value;
+            if (!id) return;
+            if (confirm(`Remove the attached photo evidence from Grievance #${id}?`)) {
+                removeComplaintImage(id);
+                document.getElementById('modalImageRow').style.display = 'none';
+                showToast(`📸 Attached image removed from Grievance #${id}.`);
+                renderStaffDashboard();
+            }
+        }
+
+        function openResolveModal(id) {
+            openActionModal(id);
+            document.getElementById('modalStatusSelect').value = 'Resolved';
+            if (!document.getElementById('modalResolutionNotes').value) {
+                document.getElementById('modalResolutionNotes').value = 'Inspected and repaired by maintenance team. Safe for normal operations.';
+            }
+        }
+
+        function closeActionModal() {
+            document.getElementById('actionModal').classList.remove('active');
+        }
+
+        function saveTicketAction(e) {
+            e.preventDefault();
+            const id = document.getElementById('modalTicketId').value;
+            const status = document.getElementById('modalStatusSelect').value;
+            const assignedTo = document.getElementById('modalAssigneeSelect').value;
+            const resolutionNotes = document.getElementById('modalResolutionNotes').value.trim();
+
+            const updates = {
+                status: status,
+                assignedTo: assignedTo,
+                resolutionNotes: resolutionNotes
+            };
+
+            if (status === 'Resolved') {
+                updates.resolvedAt = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+            }
+
+            updateComplaint(id, updates);
+            closeActionModal();
+            showToast(`✅ Ticket #${id} successfully updated!`);
+            renderStaffDashboard();
+        }
+
+        // Image Modal
+        function openImageModal(src) {
+            document.getElementById('enlargedImg').src = src;
+            document.getElementById('imageModal').classList.add('active');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        // Wallpaper Selector Modal
+        function openWallpaperModal() {
+            buildWallpaperGrid();
+            document.getElementById('wallpaperModal').classList.add('active');
+        }
+
+        function closeWallpaperModal() {
+            document.getElementById('wallpaperModal').classList.remove('active');
+        }
+
+        function buildWallpaperGrid() {
+            const current = getSavedWallpaper();
+            const container = document.getElementById('wallpaperGrid');
+            container.innerHTML = WALLPAPERS.map(wp => `
+                <div class="wallpaper-thumb ${wp.url === current ? 'active' : ''}" onclick="selectWallpaper('${wp.url}')">
+                    <img src="${wp.url}" alt="${wp.name}">
+                    <span>${wp.name}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectWallpaper(url) {
+            setWallpaper(url);
+            buildWallpaperGrid();
+            closeWallpaperModal();
+        }
+
+        function showToast(msg) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>

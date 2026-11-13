@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - CampusCARE Grievance Management</title>
+    <meta name="description" content="Report campus maintenance issues, track live resolution workflows, and rate services with CampusCARE.">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .portal-layout {
+            max-width: 1100px;
+            margin: 1.5rem auto 3rem;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        .portal-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .student-profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .student-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+        }
+
+        .student-details h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.2rem;
+            color: white;
+        }
+
+        .student-details p {
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+        }
+
+        /* Tab Switcher */
+        .tabs-header {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.75rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.75rem;
+        }
+
+        .tab-btn {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 0.75rem 1.4rem;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: rgba(37, 99, 235, 0.25);
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .tab-badge {
+            background: #2563eb;
+            color: white;
+            padding: 2px 7px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+        }
+
+        /* Form Styling */
+        .form-card {
+            padding: 2.25rem;
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        /* Category Chips Grid */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.4rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .category-chip {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius-md);
+            padding: 0.75rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .category-chip .cat-icon {
+            font-size: 1.5rem;
+        }
+
+        .category-chip .cat-text {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .category-chip:hover {
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .category-chip.selected {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(6, 182, 212, 0.25));
+            border-color: #38bdf8;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+        }
+
+        .category-chip.selected .cat-text {
+            color: #ffffff;
+        }
+
+        /* Priority Radio Chips */
+        .priority-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 0.4rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .priority-chip {
+            flex: 1;
+            min-width: 100px;
+            padding: 0.65rem 0.9rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .priority-chip:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .priority-chip.selected-urgent {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: #ef4444;
+            color: #fca5a5;
+        }
+
+        .priority-chip.selected-high {
+            background: rgba(249, 115, 22, 0.25);
+            border-color: #f97316;
+            color: #fdba74;
+        }
+
+        .priority-chip.selected-medium {
+            background: rgba(59, 130, 246, 0.25);
+            border-color: #3b82f6;
+            color: #93c5fd;
+        }
+
+        .priority-chip.selected-low {
+            background: rgba(16, 185, 129, 0.25);
+            border-color: #10b981;
+            color: #6ee7b7;
+        }
+
+        /* Location quick pills */
+        .location-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.4rem;
+        }
+
+        .location-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            padding: 0.25rem 0.65rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .location-pill:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        /* Image Upload Box */
+        .upload-dropzone {
+            border: 2px dashed rgba(148, 163, 184, 0.3);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(15, 23, 42, 0.4);
+            position: relative;
+        }
+
+        .upload-dropzone:hover {
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .upload-preview-container {
+            display: none;
+            position: relative;
+            margin-top: 1rem;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            max-width: 280px;
+            border: 1px solid var(--card-border);
+        }
+
+        .upload-preview-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .remove-img-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: rgba(0, 0, 0, 0.75);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        /* Word counter */
+        .char-counter {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: 0.25rem;
+        }
+
+        /* Complaint Tickets List */
+        .complaints-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .complaint-card {
+            padding: 1.75rem;
+            border-radius: var(--radius-lg);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .complaint-card:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+        }
+
+        .complaint-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .ticket-id {
+            font-family: monospace;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.12);
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .complaint-title {
+            font-size: 1.25rem;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .complaint-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .complaint-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .complaint-body {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+
+        .evidence-thumb {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .evidence-thumb:hover {
+            transform: scale(1.05);
+            border-color: #38bdf8;
+        }
+
+        /* 4-Stage Stepper Tracker */
+        .stepper-container {
+            margin: 1.5rem 0 1rem;
+            padding: 1.25rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .stepper-track {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 0.5rem;
+        }
+
+        .stepper-track::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+
+        .step-node {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 25%;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #1e293b;
+            border: 2px solid #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-bottom: 0.4rem;
+            transition: var(--transition);
+        }
+
+        .step-node.completed .step-circle {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .step-node.current .step-circle {
+            background: #2563eb;
+            border-color: #60a5fa;
+            color: white;
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.6);
+        }
+
+        .step-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .step-node.completed .step-name, .step-node.current .step-name {
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Resolution Box */
+        .resolution-banner {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .resolution-banner-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            color: #34d399;
+            margin-bottom: 0.4rem;
+        }
+
+        .resolution-notes {
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Rating Stars */
+        .rating-stars {
+            display: flex;
+            gap: 0.35rem;
+            margin: 0.5rem 0;
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+
+        .rating-stars span {
+            color: #475569;
+            transition: var(--transition);
+        }
+
+        .rating-stars span.active, .rating-stars span:hover {
+            color: #facc15;
+            transform: scale(1.15);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3.5rem 1.5rem;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="campus-wallpaper-bg"></div>
+    <div class="bg-mesh-glow"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <a href="index.html" class="brand-logo">
+            <div class="brand-icon">🧑🏻‍🎓</div>
+            <div class="brand-text">
+                <div class="brand-title">
+                    CampusCARE
+                    <span class="brand-badge">Student Desk</span>
+                </div>
+                <div class="brand-subtitle">Student Grievance & Maintenance Automation</div>
+            </div>
+        </a>
+
+        <div class="nav-actions">
+            <button class="wallpaper-btn" onclick="openWallpaperModal()" title="Change Wallpaper">
+                <span>🖼️ Theme</span>
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="logoutUser()">
+                <span>🚪 Logout</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="portal-layout">
+        <!-- Student Profile Welcome Banner -->
+        <div class="glass-panel portal-header-bar">
+            <div class="student-profile-badge">
+                <div class="student-avatar" id="avatarDisplay">🎓</div>
+                <div class="student-details">
+                    <h2 id="studentDisplayName">Thanush </h2>
+                    <p id="studentDisplaySub">USN: <strong>4MT22CS223</strong> • Computer Science & Engineering (2rd Year)</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <button class="btn btn-outline btn-sm" onclick="showEmergencyModal()">
+                    <span>🚨 Campus SOS Contacts</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabs Header -->
+        <div class="tabs-header">
+            <button class="tab-btn active" id="tabBtnNew" onclick="switchTab('new')">
+                <span>📝 Report a Problem</span>
+            </button>
+            <button class="tab-btn" id="tabBtnTrack" onclick="switchTab('track')">
+                <span>📋 My Submitted Tickets</span>
+                <span class="tab-badge" id="myTicketsCount">0</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: FILE COMPLAINT -->
+        <section id="tabContentNew">
+            <div class="glass-panel form-card">
+                <div style="margin-bottom: 1.75rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 0.35rem;">🔭 Submit a Campus Problem</h2>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        Provide exact location and description. Campus facilities team will inspect and dispatch crew within 24 hours.
+                    </p>
+                </div>
+
+                <form id="complaintForm" onsubmit="handleComplaintSubmit(event)">
+                    <!-- Student details preview/edit -->
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="inpStudentUsn">Student USN / Roll No.</label>
+                            <input type="text" id="inpStudentUsn" class="form-input" required placeholder="e.g. 4MT22CS223">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="inpStudentName">Student Full Name</label>
+                            <input type="text" id="inpStudentName" class="form-input" required placeholder="e.g. Thanush">
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="inpYear">Year of Study</label>
+                            <select id="inpYear" class="form-select">
+                                <option value="1st Year">1st Year (Freshman)</option>
+                                <option value="2nd Year">2nd Year (Sophomore)</option>
+                                <option value="3rd Year" selected>3rd Year (Junior)</option>
+                                <option value="4th Year">4th Year (Senior)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="inpDept">Department</label>
+                            <select id="inpDept" class="form-select">
+                                <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                                <option value="Information Science & Engineering">Information Science & Engineering</option>
+                                <option value="Electronics & Communication">Electronics & Communication</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Civil Engineering">Civil Engineering</option>
+                                <option value="AI & Data Science">AI & Data Science</option>
+                                <option value="General Campus Facility">General Campus Facility</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Category Selection Chips -->
+                    <div class="form-group">
+                        <label class="form-label">Select Issue Category <span style="color: #38bdf8;">*</span></label>
+                        <div class="category-grid" id="categoryChips">
+                            <!-- Populated via JS -->
+                        </div>
+                        <input type="hidden" id="selectedCategory" value="electricity" required>
+                    </div>
+
+                    <!-- Priority Level -->
+                    <div class="form-group">
+                        <label class="form-label">Urgency Level <span style="color: #38bdf8;">*</span></label>
+                        <div class="priority-group">
+                            <div class="priority-chip" data-priority="Low" onclick="selectPriority('Low')">
+                                <span>🟢 Low</span>
+                            </div>
+                            <div class="priority-chip selected-medium" data-priority="Medium" onclick="selectPriority('Medium')">
+                                <span>🔷 Medium</span>
+                            </div>
+                            <div class="priority-chip" data-priority="High" onclick="selectPriority('High')">
+                                <span>⚠️ High</span>
+                            </div>
+                            <div class="priority-chip" data-priority="Urgent" onclick="selectPriority('Urgent')">
+                                <span>🚨 Urgent / Hazard</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedPriority" value="Medium">
+                    </div>
+
+                    <!-- Location Input with Quick Tags -->
+                    <div class="form-group">
+                        <label class="form-label" for="inpLocation">Exact Campus Location <span style="color: #38bdf8;">*</span></label>
+                        <input type="text" id="inpLocation" class="form-input" required placeholder="e.g., Main Block - 2nd Floor - Room 204">
+                        <div class="location-pills">
+                            <span class="location-pill" onclick="appendLocation('Main Academic Block')">🏢 Main Block</span>
+                            <span class="location-pill" onclick="appendLocation('CS / IT Lab Complex')">💻 CS Lab</span>
+                            <span class="location-pill" onclick="appendLocation('Central Library')">📚 Library</span>
+                            <span class="location-pill" onclick="appendLocation('Hostel Block A')">🛏️ Hostel A</span>
+                            <span class="location-pill" onclick="appendLocation('Hostel Block B')">🛏️ Hostel B</span>
+                            <span class="location-pill" onclick="appendLocation('Campus Cafeteria')">🍔 Cafeteria</span>
+                            <span class="location-pill" onclick="appendLocation('Auditorium & Seminar Hall')">🎤 Seminar Hall</span>
+                        </div>
+                    </div>
+
+                    <!-- Problem Subject / Title -->
+                    <div class="form-group">
+                        <label class="form-label" for="inpTitle">Brief Issue Summary <span style="color: #38bdf8;">*</span></label>
+                        <input type="text" id="inpTitle" class="form-input" required placeholder="e.g., Short circuit spark in switchboard #2">
+                    </div>
+
+                    <!-- Detailed Description -->
+                    <div class="form-group">
+                        <label class="form-label" for="inpDescription">Detailed Description <span style="color: #38bdf8;">*</span></label>
+                        <textarea id="inpDescription" class="form-textarea" rows="4" maxlength="500" required placeholder="Provide specific details about what is malfunctioning, symptoms observed, or impact on classes..." oninput="updateCharCount()"></textarea>
+                        <div class="char-counter" id="charCounter">0 / 500 characters</div>
+                    </div>
+
+                    <!-- Image / Proof Upload -->
+                    <div class="form-group">
+                        <label class="form-label">Attach Photo Evidence (Optional but recommended)</label>
+                        <div class="upload-dropzone" onclick="document.getElementById('inpFile').click()">
+                            <input type="file" id="inpFile" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                            <div style="font-size: 2rem; margin-bottom: 0.35rem;">📷</div>
+                            <div style="font-weight: 600; color: #e2e8f0; font-size: 0.95rem;">Click to upload photo evidence</div>
+                            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem;">Supports JPG, PNG, WEBP (Max 5MB)</div>
+                        </div>
+
+                        <!-- Preview container -->
+                        <div class="upload-preview-container" id="previewContainer">
+                            <img src="" id="previewImg" class="upload-preview-img" alt="Uploaded Preview">
+                            <button type="button" class="remove-img-btn" onclick="removeUploadedImage()" title="Remove Image">&times;</button>
+                        </div>
+                    </div>
+
+                    <!-- Submit action -->
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center;">
+                        <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;" id="submitBtn">
+                            <span>🚀 Submit Grievance Ticket</span>
+                        </button>
+                        <button type="button" class="btn btn-outline btn-lg" onclick="fillQuickSampleData()">
+                            <span>✨ Fill Sample Issue</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- TAB 2: MY COMPLAINTS & LIVE TRACKING -->
+        <section id="tabContentTrack" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="font-size: 1.5rem; color: white;">📋 Your Submitted Grievances</h2>
+                    <p style="font-size: 0.88rem; color: var(--text-secondary);">Real-time status updates from campus maintenance crew</p>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="statusFilterChips">
+                    <button class="btn btn-outline btn-sm active-filter" onclick="filterMyComplaints('All')">All</button>
+                    <button class="btn btn-outline btn-sm" onclick="filterMyComplaints('Pending')">⏳ Pending</button>
+                    <button class="btn btn-outline btn-sm" onclick="filterMyComplaints('In Progress')">🔄 In Progress</button>
+                    <button class="btn btn-outline btn-sm" onclick="filterMyComplaints('Resolved')">✅ Resolved</button>
+                </div>
+            </div>
+
+            <!-- Complaint Cards Feed -->
+            <div class="complaints-list" id="myComplaintsContainer">
+                <!-- Dynamically rendered via JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Emergency SOS Modal -->
+    <div class="modal-overlay" id="emergencyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" style="color: #f87171;">
+                    <span>🚨</span> Campus Emergency Helplines
+                </div>
+                <button class="modal-close" onclick="closeEmergencyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="glass-panel-subtle" style="padding: 1rem; border-left: 4px solid #ef4444;">
+                        <strong style="color: white; font-size: 1rem;">Main Gate Security Control</strong>
+                        <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.2rem;">Available 24x7 for urgent campus security & patrolling</div>
+                        <div style="color: #38bdf8; font-family: monospace; font-size: 1.1rem; margin-top: 0.3rem;">📞 +91 98450 12345 / Ext 100</div>
+                    </div>
+                    <div class="glass-panel-subtle" style="padding: 1rem; border-left: 4px solid #f59e0b;">
+                        <strong style="color: white; font-size: 1rem;">Campus Electrical Emergency</strong>
+                        <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.2rem;">Transformer trip, live wire sparks, short circuits</div>
+                        <div style="color: #facc15; font-family: monospace; font-size: 1.1rem; margin-top: 0.3rem;">📞 Ext 204 / 205 (Duty Officer)</div>
+                    </div>
+                    <div class="glass-panel-subtle" style="padding: 1rem; border-left: 4px solid #10b981;">
+                        <strong style="color: white; font-size: 1rem;">Campus Medical Dispensary & Ambulance</strong>
+                        <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.2rem;">Immediate medical emergency response team</div>
+                        <div style="color: #34d399; font-family: monospace; font-size: 1.1rem; margin-top: 0.3rem;">📞 Ext 108 / +91 82582 81261</div>
+                    </div>
+                    <div class="glass-panel-subtle" style="padding: 1rem; border-left: 4px solid #8b5cf6;">
+                        <strong style="color: white; font-size: 1rem;">Anti-Ragging & Student Grievance Cell</strong>
+                        <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.2rem;">Confidential student safety & counseling</div>
+                        <div style="color: #a78bfa; font-family: monospace; font-size: 1.1rem; margin-top: 0.3rem;">📞 1800-180-5522 (Toll-Free)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Enlarge Modal -->
+    <div class="modal-overlay" id="imageModal">
+        <div class="modal-content" style="max-width: 750px; background: rgba(10, 15, 29, 0.95); text-align: center;">
+            <div class="modal-header">
+                <div class="modal-title"><span>📸</span> Photo Evidence Preview</div>
+                <button class="modal-close" onclick="closeImageModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1rem;">
+                <img src="" id="enlargedImg" style="width: 100%; max-height: 500px; object-fit: contain; border-radius: var(--radius-md);" alt="Enlarged Photo">
+            </div>
+        </div>
+    </div>
+
+    <!-- Wallpaper Selector Modal -->
+    <div class="modal-overlay" id="wallpaperModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><span>🖼️</span> Switch Wallpaper</div>
+                <button class="modal-close" onclick="closeWallpaperModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="wallpaper-picker-grid" id="wallpaperGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="campus-data.js"></script>
+    <script>
+        let currentUploadedImageBase64 = null;
+        let activeStatusFilter = 'All';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyWallpaper();
+            setupCurrentUser();
+            renderCategoryChips();
+            renderMyComplaints();
+
+            // Inter-tab live sync listener
+            window.addEventListener('storage', (e) => {
+                if (e.key === STORAGE_KEY) {
+                    renderMyComplaints();
+                }
+            });
+            window.addEventListener('campuscare_updated', () => {
+                renderMyComplaints();
+            });
+        });
+
+        function setupCurrentUser() {
+            let user = getCurrentUser();
+            if (!user || user.role !== 'student') {
+                // Auto-create default student session if user opened page directly
+                user = {
+                    role: 'student',
+                    usn: '4MT22CS223',
+                    name: 'Thanush ',
+                    department: 'Computer Science & Engineering',
+                    year: '2nd Year'
+                };
+                setCurrentUser(user);
+            }
+
+            document.getElementById('studentDisplayName').innerText = user.name;
+            document.getElementById('studentDisplaySub').innerHTML = `USN: <strong>${user.usn}</strong> • ${user.department} (${user.year || '2nd Year'})`;
+            document.getElementById('inpStudentUsn').value = user.usn;
+            document.getElementById('inpStudentName').value = user.name;
+            if (user.year) document.getElementById('inpYear').value = user.year;
+            if (user.department) document.getElementById('inpDept').value = user.department;
+        }
+
+        // Render Category Chips
+        function renderCategoryChips() {
+            const container = document.getElementById('categoryChips');
+            const categories = Object.keys(CATEGORY_META);
+            container.innerHTML = categories.map(key => {
+                const item = CATEGORY_META[key];
+                const isSelected = key === 'electricity';
+                return `
+                    <div class="category-chip ${isSelected ? 'selected' : ''}" data-cat="${key}" onclick="selectCategory('${key}')">
+                        <span class="cat-icon">${item.icon}</span>
+                        <span class="cat-text">${item.label}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectCategory(cat) {
+            document.querySelectorAll('.category-chip').forEach(el => el.classList.remove('selected'));
+            const target = document.querySelector(`.category-chip[data-cat="${cat}"]`);
+            if (target) target.classList.add('selected');
+            document.getElementById('selectedCategory').value = cat;
+        }
+
+        // Priority Selection
+        function selectPriority(level) {
+            document.querySelectorAll('.priority-chip').forEach(el => {
+                el.className = 'priority-chip';
+            });
+            const target = document.querySelector(`.priority-chip[data-priority="${level}"]`);
+            if (target) {
+                target.classList.add(`selected-${level.toLowerCase()}`);
+            }
+            document.getElementById('selectedPriority').value = level;
+        }
+
+        function appendLocation(loc) {
+            const inp = document.getElementById('inpLocation');
+            inp.value = loc + ' - ';
+            inp.focus();
+        }
+
+        function updateCharCount() {
+            const txt = document.getElementById('inpDescription').value;
+            document.getElementById('charCounter').innerText = `${txt.length} / 500 characters`;
+        }
+
+        // Image Upload & Preview Handler
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast("⚠️ Image size exceeds 5MB limit. Please choose a smaller image.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                currentUploadedImageBase64 = evt.target.result;
+                document.getElementById('previewImg').src = currentUploadedImageBase64;
+                document.getElementById('previewContainer').style.display = 'block';
+                showToast("📸 Photo attached successfully");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeUploadedImage() {
+            currentUploadedImageBase64 = null;
+            document.getElementById('previewContainer').style.display = 'none';
+            document.getElementById('inpFile').value = '';
+        }
+
+        // Quick Sample Issue Filler for Demo
+        function fillQuickSampleData() {
+            const sampleIssues = [
+                {
+                    cat: 'electricity',
+                    loc: 'CS Block - 3rd Floor - Programming Lab 302',
+                    title: 'Short circuit sparks and fused tube lights',
+                    desc: 'Sparks noticed in switchboard near terminal 12 during afternoon lab. Two fluorescent lights are dead and students cannot work safely.'
+                },
+                {
+                    cat: 'wi-fi',
+                    loc: 'Central Library - 2nd Floor Digital Reading Section',
+                    title: 'Wi-Fi AP offline, cannot download research papers',
+                    desc: 'The Access Point CAMPUS-LIB-02 shows solid red light and will not assign IP addresses via DHCP.'
+                },
+                {
+                    cat: 'water',
+                    loc: 'Mechanical Block - Ground Floor Restroom',
+                    title: 'Wash basin tap broken and leaking heavily',
+                    desc: 'The valve handle came off and water is continuously flooding the washroom floor creating slipping hazard.'
+                }
+            ];
+
+            const pick = sampleIssues[Math.floor(Math.random() * sampleIssues.length)];
+            selectCategory(pick.cat);
+            selectPriority('High');
+            document.getElementById('inpLocation').value = pick.loc;
+            document.getElementById('inpTitle').value = pick.title;
+            document.getElementById('inpDescription').value = pick.desc;
+            updateCharCount();
+            showToast("✨ Sample grievance details filled!");
+        }
+
+        // Form Submission
+        function handleComplaintSubmit(e) {
+            e.preventDefault();
+            const user = getCurrentUser() || {};
+            const usn = document.getElementById('inpStudentUsn').value.trim();
+            const name = document.getElementById('inpStudentName').value.trim();
+            const year = document.getElementById('inpYear').value;
+            const dept = document.getElementById('inpDept').value;
+            const category = document.getElementById('selectedCategory').value;
+            const priority = document.getElementById('selectedPriority').value;
+            const location = document.getElementById('inpLocation').value.trim();
+            const title = document.getElementById('inpTitle').value.trim();
+            const description = document.getElementById('inpDescription').value.trim();
+
+            if (!location || !title || !description) {
+                showToast("⚠️ Please fill in all required fields.");
+                return;
+            }
+
+            const newTicket = addComplaint({
+                studentName: name,
+                studentUsn: usn,
+                year: year,
+                department: dept,
+                category: category,
+                priority: priority,
+                location: location,
+                title: title,
+                description: description,
+                image: currentUploadedImageBase64
+            });
+
+            // Reset form
+            document.getElementById('complaintForm').reset();
+            setupCurrentUser();
+            removeUploadedImage();
+            updateCharCount();
+
+            showToast(`✅ Ticket #${newTicket.id} submitted successfully!`);
+
+            // Switch to tracking tab after brief delay
+            setTimeout(() => {
+                switchTab('track');
+            }, 600);
+        }
+
+        // Switch Tabs
+        function switchTab(tab) {
+            const btnNew = document.getElementById('tabBtnNew');
+            const btnTrack = document.getElementById('tabBtnTrack');
+            const contentNew = document.getElementById('tabContentNew');
+            const contentTrack = document.getElementById('tabContentTrack');
+
+            if (tab === 'new') {
+                btnNew.classList.add('active');
+                btnTrack.classList.remove('active');
+                contentNew.style.display = 'block';
+                contentTrack.style.display = 'none';
+            } else {
+                btnNew.classList.remove('active');
+                btnTrack.classList.add('active');
+                contentNew.style.display = 'none';
+                contentTrack.style.display = 'block';
+                renderMyComplaints();
+            }
+        }
+
+        // Render My Complaints
+        function renderMyComplaints() {
+            const user = getCurrentUser() || {};
+            const all = getAllComplaints();
+            // Filter complaints matching this student's USN (or show all if USN matches or for demo)
+            const myComplaints = all.filter(c => {
+                if (user.usn) {
+                    return c.studentUsn.toLowerCase() === user.usn.toLowerCase();
+                }
+                return true;
+            });
+
+            // Update badge counter
+            document.getElementById('myTicketsCount').innerText = myComplaints.length;
+
+            const container = document.getElementById('myComplaintsContainer');
+            let filtered = myComplaints;
+            if (activeStatusFilter !== 'All') {
+                filtered = myComplaints.filter(c => c.status === activeStatusFilter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-panel empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3 style="color: white; margin-bottom: 0.5rem;">No ${activeStatusFilter === 'All' ? '' : activeStatusFilter} Tickets Found</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.25rem;">You haven't filed any grievances under this category yet.</p>
+                        <button class="btn btn-primary" onclick="switchTab('new')">
+                            <span>📝 File a New Complaint</span>
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(c => {
+                const priorityInfo = PRIORITY_META[c.priority] || PRIORITY_META['Medium'];
+                const statusInfo = STATUS_META[c.status] || STATUS_META['Pending'];
+                const catInfo = CATEGORY_META[c.category] || { label: c.category, icon: '📌' };
+
+                // Stepper states
+                let stepSubmitted = 'completed';
+                let stepReview = c.status !== 'Pending' ? 'completed' : 'current';
+                let stepProgress = c.status === 'In Progress' ? 'current' : (c.status === 'Resolved' ? 'completed' : '');
+                let stepResolved = c.status === 'Resolved' ? 'completed' : '';
+
+                return `
+                    <div class="glass-panel complaint-card" id="card-${c.id}">
+                        <div class="complaint-card-header">
+                            <div>
+                                <span class="ticket-id">#${c.id}</span>
+                                <span class="badge" style="background: ${priorityInfo.bg}; color: ${priorityInfo.color}; border-color: ${priorityInfo.border}; margin-left: 0.5rem;">
+                                    ${priorityInfo.icon} ${c.priority} Priority
+                                </span>
+                                <span class="badge" style="background: rgba(255,255,255,0.08); color: #cbd5e1; margin-left: 0.35rem;">
+                                    ${catInfo.icon} ${c.categoryLabel || catInfo.label}
+                                </span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <span class="badge" style="background: ${statusInfo.bg}; color: ${statusInfo.color}; border-color: ${statusInfo.border}; font-size: 0.85rem;">
+                                    ${statusInfo.icon} ${c.status}
+                                </span>
+                                ${c.status === 'Pending' ? `
+                                    <button class="btn btn-outline btn-sm" onclick="withdrawStudentComplaint('${c.id}')" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35); padding: 0.2rem 0.6rem; font-size: 0.78rem;" title="Withdraw / Cancel Grievance">
+                                        <span>🗑️ Withdraw</span>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <h3 class="complaint-title">${escapeHtml(c.title)}</h3>
+
+                        <div class="complaint-meta">
+                            <div class="complaint-meta-item">📍 <strong>Location:</strong> ${escapeHtml(c.location)}</div>
+                            <div class="complaint-meta-item">🗓️ <strong>Logged:</strong> ${c.createdAt}</div>
+                            <div class="complaint-meta-item">🛠️ <strong>Assigned Crew:</strong> ${escapeHtml(c.assignedTo || 'Pending Dispatch')}</div>
+                        </div>
+
+                        <p class="complaint-body">${escapeHtml(c.description)}</p>
+
+                        ${c.image ? `
+                            <div style="margin-bottom: 1.25rem;">
+                                <div style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.35rem;">Attached Photo Proof:</div>
+                                <img src="${c.image}" class="evidence-thumb" onclick="openImageModal('${c.image}')" alt="Issue Evidence" title="Click to enlarge">
+                            </div>
+                        ` : ''}
+
+                        <!-- 4-Stage Stepper Tracker -->
+                        <div class="stepper-container">
+                            <div style="font-size: 0.82rem; font-weight: 700; color: #94a3b8; margin-bottom: 0.75rem;">
+                                📡 LIVE RESOLUTION TIMELINE
+                            </div>
+                            <div class="stepper-track">
+                                <div class="step-node ${stepSubmitted}">
+                                    <div class="step-circle">1</div>
+                                    <div class="step-name">Submitted</div>
+                                </div>
+                                <div class="step-node ${stepReview}">
+                                    <div class="step-circle">2</div>
+                                    <div class="step-name">Under Review</div>
+                                </div>
+                                <div class="step-node ${stepProgress}">
+                                    <div class="step-circle">3</div>
+                                    <div class="step-name">Technician Active</div>
+                                </div>
+                                <div class="step-node ${stepResolved}">
+                                    <div class="step-circle">4</div>
+                                    <div class="step-name">Resolved</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resolved Banner & Rating Form -->
+                        ${c.status === 'Resolved' ? `
+                            <div class="resolution-banner">
+                                <div class="resolution-banner-header">
+                                    <span>🎉</span> Issue Marked Resolved by Maintenance Cell
+                                </div>
+                                <div class="resolution-notes">
+                                    <strong>Staff Remarks:</strong> ${escapeHtml(c.resolutionNotes || 'Maintenance completed and inspected for safety.')}
+                                </div>
+                                <div style="font-size: 0.8rem; color: #a7f3d0; margin-bottom: 0.65rem;">
+                                    Completed at: ${c.resolvedAt || 'Recently'}
+                                </div>
+
+                                <!-- Student Rating -->
+                                <div style="border-top: 1px solid rgba(16, 185, 129, 0.25); padding-top: 0.75rem; margin-top: 0.75rem;">
+                                    <div style="font-size: 0.85rem; font-weight: 600; color: white;">Rate Maintenance Quality:</div>
+                                    <div class="rating-stars" id="rating-stars-${c.id}">
+                                        ${[1, 2, 3, 4, 5].map(star => `
+                                            <span class="${(c.studentRating && c.studentRating >= star) ? 'active' : ''}" onclick="submitRating('${c.id}', ${star})">★</span>
+                                        `).join('')}
+                                    </div>
+                                    ${c.studentRating ? `
+                                        <div style="font-size: 0.82rem; color: #facc15;">
+                                            You rated this work ${c.studentRating}/5 stars. ${c.studentFeedback ? `Feedback: "${escapeHtml(c.studentFeedback)}"` : ''}
+                                        </div>
+                                    ` : `
+                                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                            <input type="text" id="feedback-input-${c.id}" class="form-input btn-sm" placeholder="Write quick feedback note..." style="font-size: 0.85rem;">
+                                            <button class="btn btn-emerald btn-sm" onclick="saveRatingWithNote('${c.id}')">Submit Feedback</button>
+                                        </div>
+                                    `}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterMyComplaints(status) {
+            activeStatusFilter = status;
+            document.querySelectorAll('#statusFilterChips button').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+            });
+            event.target.classList.remove('btn-outline');
+            event.target.classList.add('btn-primary');
+            renderMyComplaints();
+        }
+
+        function submitRating(id, stars) {
+            updateComplaint(id, { studentRating: stars });
+            showToast(`⭐ Thank you for rating ${stars} stars!`);
+            renderMyComplaints();
+        }
+
+        function saveRatingWithNote(id) {
+            const input = document.getElementById(`feedback-input-${id}`);
+            const note = input ? input.value.trim() : '';
+            const c = getAllComplaints().find(item => item.id === id);
+            const stars = c && c.studentRating ? c.studentRating : 5;
+            updateComplaint(id, { studentRating: stars, studentFeedback: note });
+            showToast("⭐ Feedback recorded! Staff has been notified.");
+            renderMyComplaints();
+        }
+
+        // Student withdraw / delete pending grievance
+        function withdrawStudentComplaint(id) {
+            if (confirm(`⚠️ Are you sure you want to withdraw and delete complaint #${id}?`)) {
+                deleteComplaint(id);
+                showToast(`🗑️ Complaint #${id} has been withdrawn.`);
+                renderMyComplaints();
+            }
+        }
+
+        // Image & Modal Popups
+        function openImageModal(src) {
+            document.getElementById('enlargedImg').src = src;
+            document.getElementById('imageModal').classList.add('active');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        function showEmergencyModal() {
+            document.getElementById('emergencyModal').classList.add('active');
+        }
+
+        function closeEmergencyModal() {
+            document.getElementById('emergencyModal').classList.remove('active');
+        }
+
+        // Wallpaper Selector Modal
+        function openWallpaperModal() {
+            buildWallpaperGrid();
+            document.getElementById('wallpaperModal').classList.add('active');
+        }
+
+        function closeWallpaperModal() {
+            document.getElementById('wallpaperModal').classList.remove('active');
+        }
+
+        function buildWallpaperGrid() {
+            const current = getSavedWallpaper();
+            const container = document.getElementById('wallpaperGrid');
+            container.innerHTML = WALLPAPERS.map(wp => `
+                <div class="wallpaper-thumb ${wp.url === current ? 'active' : ''}" onclick="selectWallpaper('${wp.url}')">
+                    <img src="${wp.url}" alt="${wp.name}">
+                    <span>${wp.name}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectWallpaper(url) {
+            setWallpaper(url);
+            buildWallpaperGrid();
+            closeWallpaperModal();
+        }
+
+        // Toast Messages
+        function showToast(msg) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>

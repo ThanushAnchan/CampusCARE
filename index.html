@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusCARE - Modern Campus Maintenance & Grievance Portal</title>
+    <meta name="description" content="CampusCARE provides students and staff with an automated, transparent campus grievance reporting and rapid resolution platform.">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .hero-section {
+            padding: 3.5rem 1.5rem 2.5rem;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.1rem;
+            background: rgba(37, 99, 235, 0.18);
+            border: 1px solid rgba(96, 165, 250, 0.35);
+            border-radius: var(--radius-full);
+            color: #93c5fd;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .hero-title {
+            font-size: 3.2rem;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #ffffff 20%, #bfdbfe 70%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: #cbd5e1;
+            max-width: 680px;
+            margin: 0 auto 2.5rem;
+            font-weight: 400;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3.5rem;
+        }
+
+        .stat-card {
+            padding: 1.35rem 1rem;
+            border-radius: var(--radius-md);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+
+        .stat-val {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        /* Portal Cards */
+        .portals-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 2rem;
+            max-width: 1050px;
+            margin: 0 auto 4rem;
+            padding: 0 1rem;
+        }
+
+        .portal-card {
+            padding: 2.5rem 2rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .portal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            transition: var(--transition);
+        }
+
+        .portal-student::before {
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+        }
+
+        .portal-staff::before {
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+        }
+
+        .portal-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .portal-icon-wrap {
+            width: 68px;
+            height: 68px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .portal-student .portal-icon-wrap {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(96, 165, 250, 0.35);
+        }
+
+        .portal-staff .portal-icon-wrap {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(251, 191, 36, 0.35);
+        }
+
+        .portal-name {
+            font-size: 1.65rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .portal-desc {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 1.75rem;
+            line-height: 1.5;
+        }
+
+        .portal-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .portal-feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-size: 0.88rem;
+            color: #e2e8f0;
+        }
+
+        .portal-feature-list li span.bullet-icon {
+            font-size: 1rem;
+        }
+
+        .portal-action-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        /* How it works section */
+        .workflow-section {
+            max-width: 1050px;
+            margin: 0 auto 4rem;
+            padding: 2.5rem 2rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+        }
+
+        .section-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+
+        .step-box {
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+
+        .step-num {
+            font-family: var(--font-heading);
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: rgba(96, 165, 250, 0.25);
+            position: absolute;
+            top: 0.75rem;
+            right: 1.25rem;
+        }
+
+        .step-title {
+            font-size: 1.15rem;
+            color: white;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-desc {
+            font-size: 0.88rem;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* Emergency strip */
+        .emergency-strip {
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.15));
+            border-top: 1px solid rgba(239, 68, 68, 0.3);
+            border-bottom: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            font-size: 0.88rem;
+        }
+
+        .emergency-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fca5a5;
+        }
+
+        .emergency-item strong {
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: auto;
+        }
+
+        .wallpaper-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .wallpaper-thumb {
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .wallpaper-thumb.active, .wallpaper-thumb:hover {
+            border-color: #38bdf8;
+            transform: scale(1.02);
+        }
+
+        .wallpaper-thumb img {
+            width: 100%;
+            height: 90px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .wallpaper-thumb span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            font-size: 0.72rem;
+            padding: 2px 6px;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="campus-wallpaper-bg"></div>
+    <div class="bg-mesh-glow"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <a href="index.html" class="brand-logo">
+            <div class="brand-icon">🏛️</div>
+            <div class="brand-text">
+                <div class="brand-title">
+                    CampusCARE
+                    <span class="brand-badge">Official Portal</span>
+                </div>
+                <div class="brand-subtitle">Automated Campus Grievance & Maintenance System</div>
+            </div>
+        </a>
+
+        <div class="nav-actions">
+            <button class="wallpaper-btn" onclick="openWallpaperModal()" title="Switch Campus Background Wallpaper">
+                <span>🖼️ Change Wallpaper</span>
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="openLogin('student')">
+                <span>🧑🏻‍🎓 Student</span>
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openLogin('staff')">
+                <span>🧑🏻‍🔧 Staff Portal</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Content -->
+    <main class="hero-section">
+        <div class="hero-pill">
+            <span>✨ CampusCARE 2.0 Live</span> • Rapid Resolution Ecosystem
+        </div>
+        <h1 class="hero-title">Report, Track & Resolve<br>Campus Grievances in Minutes</h1>
+        <p class="hero-subtitle">
+            A unified smart portal bridging students with campus maintenance and administrative cells. Report infrastructure faults, track live work progress, and verify resolutions transparently.
+        </p>
+
+        <!-- Live Campus Stats Counters -->
+        <div class="stats-grid">
+            <div class="glass-panel stat-card">
+                <div class="stat-val" id="stat-total">142</div>
+                <div class="stat-label">Issues Resolved</div>
+            </div>
+            <div class="glass-panel stat-card">
+                <div class="stat-val" id="stat-rate">98.4%</div>
+                <div class="stat-label">Resolution Rate</div>
+            </div>
+            <div class="glass-panel stat-card">
+                <div class="stat-val">< 24h</div>
+                <div class="stat-label">Avg Turnaround</div>
+            </div>
+            <div class="glass-panel stat-card">
+                <div class="stat-val" id="stat-rating">4.9 ★</div>
+                <div class="stat-label">Student Satisfaction</div>
+            </div>
+        </div>
+
+        <!-- Portals Grid -->
+        <div class="portals-container">
+            <!-- Student Portal Box -->
+            <div class="glass-panel portal-card portal-student">
+                <div>
+                    <div class="portal-icon-wrap">🧑🏻‍🎓</div>
+                    <h2 class="portal-name">Student Portal</h2>
+                    <p class="portal-desc">
+                        Encountered a broken chair, water outage, power spark, or Wi-Fi drop? File a grievance with location and photo evidence immediately.
+                    </p>
+                    <ul class="portal-feature-list">
+                        <li><span class="bullet-icon">⚡</span> <strong>60-Second Grievance Filing:</strong> Simple category selection</li>
+                        <li><span class="bullet-icon">📸</span> <strong>Photo Proof Upload:</strong> Attach live issue images</li>
+                        <li><span class="bullet-icon">📊</span> <strong>4-Stage Live Tracker:</strong> Review progress in real-time</li>
+                        <li><span class="bullet-icon">⭐</span> <strong>Feedback & Rating:</strong> Rate staff after work completion</li>
+                    </ul>
+                </div>
+                <div class="portal-action-group">
+                    <button class="btn btn-primary btn-lg" onclick="openLogin('student')">
+                        <span>Student Login ➡️</span>
+                    </button>
+                    <button class="btn btn-outline" onclick="quickDemoLogin('student')">
+                        <span>⚡ 1-Click Demo Student Access</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Staff Portal Box -->
+            <div class="glass-panel portal-card portal-staff">
+                <div>
+                    <div class="portal-icon-wrap">🧑🏻‍🔧</div>
+                    <h2 class="portal-name">Staff & Admin Portal</h2>
+                    <p class="portal-desc">
+                        Central command center for electrical, plumbing, network, carpentry, and housekeeping crews to inspect, assign, and mark resolved.
+                    </p>
+                    <ul class="portal-feature-list">
+                        <li><span class="bullet-icon">📋</span> <strong>Live Ticket Queue:</strong> Instant notification of new reports</li>
+                        <li><span class="bullet-icon">🔍</span> <strong>Search & Department Filters:</strong> Filter by urgency & type</li>
+                        <li><span class="bullet-icon">🛠️</span> <strong>Status Workflows:</strong> In Progress, Resolved & Notes</li>
+                        <li><span class="bullet-icon">📑</span> <strong>Analytics & CSV Export:</strong> Generate audit reports</li>
+                    </ul>
+                </div>
+                <div class="portal-action-group">
+                    <button class="btn btn-emerald btn-lg" onclick="openLogin('staff')">
+                        <span>Staff Login ➡️</span>
+                    </button>
+                    <button class="btn btn-outline" onclick="quickDemoLogin('staff')">
+                        <span>⚡ 1-Click Demo Staff Access</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3-Step Workflow -->
+        <div class="glass-panel workflow-section">
+            <div class="section-header">
+                <h3 class="section-title">How CampusCARE Works</h3>
+                <p class="section-subtitle">A transparent 3-step loop between students and maintenance teams</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <div class="step-title"><span>📝</span> Snap & Report</div>
+                    <p class="step-desc">Select room/block, pick problem category, add a description, and attach an optional photo proof.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <div class="step-title"><span>🔄</span> Dispatch & Work</div>
+                    <p class="step-desc">Relevant campus cell accepts the ticket, dispatches technicians, and logs real-time updates.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <div class="step-title"><span>✅</span> Resolve & Rate</div>
+                    <p class="step-desc">Staff marks issue resolved with resolution remarks. Student verifies fix and provides a star rating.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Emergency Contacts Ribbon -->
+    <div class="emergency-strip">
+        <div class="emergency-item">
+            <span>🚨</span>
+            <div><strong>Campus Security:</strong> +91 98450 12345 (Ext. 100)</div>
+        </div>
+        <div class="emergency-item">
+            <span>⚡</span>
+            <div><strong>Electrical Emergency:</strong> Ext. 204 / 205</div>
+        </div>
+        <div class="emergency-item">
+            <span>🏥</span>
+            <div><strong>Health Center & Ambulance:</strong> Ext. 108</div>
+        </div>
+        <div class="emergency-item">
+            <span>🛡️</span>
+            <div><strong>Anti-Ragging / Student Welfare:</strong> 1800-180-5522</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2026 CampusCARE • Campus Grievance & Facility Management System • Designed for Excellence</p>
+    </footer>
+
+    <!-- Student Login Modal -->
+    <div class="modal-overlay" id="studentLoginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>🧑🏻‍🎓</span> Student Sign In
+                </div>
+                <button class="modal-close" onclick="closeLogin('student')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="studentLoginForm" onsubmit="handleStudentLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="modalStudentUsn">University Seat Number (USN / ID)</label>
+                        <input type="text" id="modalStudentUsn" class="form-input" placeholder="e.g.4MT25CS223" required value="">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modalStudentName">Full Student Name</label>
+                        <input type="text" id="modalStudentName" class="form-input" placeholder="e.g. Thanush" required value="">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modalStudentDept">Department</label>
+                        <select id="modalStudentDept" class="form-select">
+                            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                            <option value="Information Science & Engineering">Information Science & Engineering</option>
+                            <option value="Electronics & Communication">Electronics & Communication</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                            <option value="AI & Data Science">AI & Data Science</option>
+                            <option value="MBA / Management">MBA / Management</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modalStudentPassword">Password</label>
+                        <div style="position: relative;">
+                            <input type="password" id="modalStudentPassword" class="form-input" placeholder="Enter student password" required value="">
+                            <button type="button" onclick="togglePasswordVisibility('modalStudentPassword')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem; color: #94a3b8;">👁️</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
+                            <span>Sign In to Student Portal ➡️</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staff Login Modal -->
+    <div class="modal-overlay" id="staffLoginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>🧑🏻‍🔧</span> Staff & Admin Sign In
+                </div>
+                <button class="modal-close" onclick="closeLogin('staff')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="staffLoginForm" onsubmit="handleStaffLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="modalStaffId">Staff ID / Name</label>
+                        <input type="text" id="modalStaffId" class="form-input" placeholder="e.g. STF-EST-882 (Ramesh Kumar)" required value="Ramesh Kumar (Estate Officer)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modalStaffDept">Assigned Department</label>
+                        <select id="modalStaffDept" class="form-select">
+                            <option value="All Departments">Central Maintenance & Admin (All)</option>
+                            <option value="Electrical">Electrical Maintenance</option>
+                            <option value="Plumbing">Plumbing & Water Supply</option>
+                            <option value="IT & Network">IT Infrastructure & Wi-Fi</option>
+                            <option value="Civil & Carpentry">Civil & Carpentry</option>
+                            <option value="Housekeeping">Housekeeping & Sanitation</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modalStaffPassword">Password</label>
+                        <div style="position: relative;">
+                            <input type="password" id="modalStaffPassword" class="form-input" placeholder="Enter staff password" required value="staff123">
+                            <button type="button" onclick="togglePasswordVisibility('modalStaffPassword')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem; color: #94a3b8;">👁️</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-emerald" style="flex: 1;">
+                            <span>Sign In to Staff Portal ➡️</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wallpaper Selector Modal -->
+    <div class="modal-overlay" id="wallpaperModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>🖼️</span> Select Campus Wallpaper
+                </div>
+                <button class="modal-close" onclick="closeWallpaperModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                    Choose your preferred university campus backdrop. This selection will persist across all pages.
+                </p>
+                <div class="wallpaper-picker-grid" id="wallpaperOptionsContainer">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="campus-data.js"></script>
+    <script>
+        // Init stats & wallpapers on load
+        document.addEventListener('DOMContentLoaded', () => {
+            applyWallpaper();
+            refreshStats();
+            buildWallpaperGrid();
+        });
+
+        function refreshStats() {
+            const stats = getSystemStats();
+            document.getElementById('stat-total').innerText = stats.total + 138;
+            document.getElementById('stat-rate').innerText = stats.rate + '%';
+            document.getElementById('stat-rating').innerText = stats.avgRating + ' ★';
+        }
+
+        function openLogin(type) {
+            const modalId = type === 'student' ? 'studentLoginModal' : 'staffLoginModal';
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeLogin(type) {
+            const modalId = type === 'student' ? 'studentLoginModal' : 'staffLoginModal';
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function togglePasswordVisibility(fieldId) {
+            const field = document.getElementById(fieldId);
+            field.type = field.type === 'password' ? 'text' : 'password';
+        }
+
+        function handleStudentLogin(e) {
+            e.preventDefault();
+            const usn = document.getElementById('modalStudentUsn').value.trim();
+            const name = document.getElementById('modalStudentName').value.trim();
+            const dept = document.getElementById('modalStudentDept').value;
+            
+            setCurrentUser({
+                role: 'student',
+                usn: usn,
+                name: name,
+                department: dept,
+                year: '3rd Year'
+            });
+
+            window.location.href = 'student-complaint.html';
+        }
+
+        function handleStaffLogin(e) {
+            e.preventDefault();
+            const name = document.getElementById('modalStaffId').value.trim();
+            const dept = document.getElementById('modalStaffDept').value;
+
+            setCurrentUser({
+                role: 'staff',
+                name: name,
+                department: dept
+            });
+
+            window.location.href = 'staff-login.html';
+        }
+
+        function quickDemoLogin(role) {
+            if (role === 'student') {
+                setCurrentUser({
+                    role: 'student',
+                    usn: '4MT22CS223',
+                    name: 'Thanush',
+                    department: 'Computer Science & Engineering',
+                    year: '2rd Year'
+                });
+                window.location.href = 'student-complaint.html';
+            } else {
+                setCurrentUser({
+                    role: 'staff',
+                    name: 'Ramesh Kumar (Estate Officer)',
+                    department: 'All Departments'
+                });
+                window.location.href = 'staff-login.html';
+            }
+        }
+
+        // Wallpaper Management
+        function openWallpaperModal() {
+            document.getElementById('wallpaperModal').classList.add('active');
+        }
+
+        function closeWallpaperModal() {
+            document.getElementById('wallpaperModal').classList.remove('active');
+        }
+
+        function buildWallpaperGrid() {
+            const current = getSavedWallpaper();
+            const container = document.getElementById('wallpaperOptionsContainer');
+            container.innerHTML = WALLPAPERS.map(wp => `
+                <div class="wallpaper-thumb ${wp.url === current ? 'active' : ''}" onclick="selectWallpaper('${wp.url}')">
+                    <img src="${wp.url}" alt="${wp.name}">
+                    <span>${wp.name}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectWallpaper(url) {
+            setWallpaper(url);
+            buildWallpaperGrid();
+            closeWallpaperModal();
+        }
+
+        // Close modal on click outside
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
