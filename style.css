@@ -487,12 +487,131 @@ h1, h2, h3, h4, h5 {
     to { transform: translateX(0); opacity: 1; }
 }
 
-/* Responsive utilities */
+/* Responsive utilities and Multi-device Optimization */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Tablet & Mobile Screens (<= 992px) */
+@media (max-width: 992px) {
+    .navbar {
+        padding: 0.9rem 1.5rem;
+    }
+}
+
+/* Mobile Screens (<= 768px) */
 @media (max-width: 768px) {
     .navbar {
-        padding: 0.9rem 1.25rem;
+        padding: 0.85rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
     }
+
     .brand-title {
         font-size: 1.15rem;
+    }
+
+    .brand-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1.4rem;
+        border-radius: 10px;
+    }
+
+    .nav-actions {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .nav-actions .btn, .nav-actions .wallpaper-btn {
+        flex: 1 1 auto;
+        padding: 0.45rem 0.75rem;
+        font-size: 0.8rem;
+        text-align: center;
+        justify-content: center;
+    }
+
+    /* Modal Mobile Optimization */
+    .modal-overlay {
+        padding: 0.75rem;
+        align-items: center;
+    }
+
+    .modal-content {
+        max-height: 88vh;
+        display: flex;
+        flex-direction: column;
+        border-radius: var(--radius-md);
+    }
+
+    .modal-body {
+        overflow-y: auto;
+        padding: 1.15rem;
+    }
+
+    /* Toast Container on Mobile */
+    .toast-container {
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+    }
+
+    .toast {
+        min-width: 0;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Small Mobile Screens (<= 480px) */
+@media (max-width: 480px) {
+    :root {
+        --radius-lg: 14px;
+        --radius-md: 10px;
+    }
+
+    .navbar {
+        padding: 0.75rem 0.75rem;
+    }
+
+    .brand-subtitle {
+        display: none;
+    }
+
+    .brand-title {
+        font-size: 1.05rem;
+    }
+
+    .brand-badge {
+        font-size: 0.6rem;
+        padding: 1px 5px;
+    }
+
+    .btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.88rem;
+    }
+
+    .btn-sm {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.78rem;
+    }
+
+    .btn-lg {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.95rem;
+    }
+
+    .form-input, .form-select, .form-textarea {
+        padding: 0.65rem 0.85rem;
+        font-size: 0.88rem;
+    }
+
+    .wallpaper-picker-grid {
+        grid-template-columns: 1fr;
     }
 }

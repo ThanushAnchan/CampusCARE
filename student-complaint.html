@@ -503,6 +503,168 @@
             margin-bottom: 1rem;
             opacity: 0.8;
         }
+
+        /* Mobile & Tablet Responsive Media Queries */
+        @media (max-width: 768px) {
+            .portal-layout {
+                padding: 0 0.75rem;
+                margin: 1.25rem auto 2.5rem;
+            }
+
+            .portal-header-bar {
+                padding: 1.15rem;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .portal-header-bar > div:last-child {
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .portal-header-bar > div:last-child .btn {
+                flex: 1 1 auto;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .tabs-header {
+                gap: 0.5rem;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .tab-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.88rem;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            .form-card {
+                padding: 1.5rem 1.15rem;
+            }
+
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .category-grid {
+                grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+                gap: 0.6rem;
+            }
+
+            .priority-group {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+
+            .priority-chip {
+                min-width: 0;
+                padding: 0.6rem 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .stepper-container {
+                padding: 1rem 0.65rem;
+            }
+
+            .stepper-track::before {
+                top: 12px;
+                left: 15px;
+                right: 15px;
+                height: 2px;
+            }
+
+            .step-circle {
+                width: 24px;
+                height: 24px;
+                font-size: 0.68rem;
+            }
+
+            .step-name {
+                font-size: 0.65rem;
+                line-height: 1.2;
+            }
+
+            .complaint-card {
+                padding: 1.25rem 1rem;
+            }
+
+            .complaint-title {
+                font-size: 1.15rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .portal-layout {
+                padding: 0 0.5rem;
+                margin: 0.75rem auto 2rem;
+            }
+
+            .student-avatar {
+                width: 44px;
+                height: 44px;
+                font-size: 1.4rem;
+            }
+
+            .student-details h2 {
+                font-size: 1.05rem;
+            }
+
+            .student-details p {
+                font-size: 0.76rem;
+            }
+
+            .form-card {
+                padding: 1.15rem 0.85rem;
+            }
+
+            .category-chip {
+                padding: 0.55rem 0.35rem;
+            }
+
+            .category-chip .cat-icon {
+                font-size: 1.3rem;
+            }
+
+            .category-chip .cat-text {
+                font-size: 0.7rem;
+            }
+
+            .upload-dropzone {
+                padding: 1.15rem 0.85rem;
+            }
+
+            .complaint-meta {
+                flex-direction: column;
+                gap: 0.35rem;
+                font-size: 0.78rem;
+            }
+
+            .complaint-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .resolution-banner {
+                padding: 0.9rem 0.75rem;
+            }
+
+            .resolution-banner > div:last-child > div:last-child {
+                flex-direction: column !important;
+            }
+
+            .resolution-banner input, .resolution-banner button {
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 <body>

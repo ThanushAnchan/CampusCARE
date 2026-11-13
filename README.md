@@ -83,3 +83,4 @@ Simply double-click `index.html` in your file explorer to open it in Chrome, Edg
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
+
